@@ -24,6 +24,7 @@ Both are tagged with the DOSBox-X version (for example `2026.10.01`) and `latest
 - Browser UI on port 8080, raw VNC on port 5901.
 - Mount a volume at `/config` (config, logs, `drive_d`).
 - `VNCPASSWORD` (or `VNCPASS`): VNC password, first 8 characters are used. A random one is logged at startup if unset.
+- `VNCAUTH=none` disables the password for both VNC and noVNC. Only use it on a trusted network.
 - `AUTOSLEEP=1` (default) pauses DOSBox-X while no VNC client is connected.
 - `VNCGEOMETRY` (default `1024x768`) and `VNCDEPTH` (default `24`).
 

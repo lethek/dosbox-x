@@ -10,17 +10,23 @@ if [ ! -w "$config" ]; then
 fi
 mkdir -p "$config/drive_d" "$config/log" "$HOME/.vnc"
 
-password="${VNCPASSWORD:-${VNCPASS:-}}"
-if [ -z "$password" ]; then
-    password="$(head -c 12 /dev/urandom | base64 | tr -dc 'A-Za-z0-9' | head -c 8)"
-    echo "No VNCPASSWORD set. Generated password for this session: $password"
+if [ "${VNCAUTH:-password}" = "none" ]; then
+    echo "VNCAUTH=none: VNC and noVNC require no password"
+    auth_args=(-SecurityTypes None)
+else
+    password="${VNCPASSWORD:-${VNCPASS:-}}"
+    if [ -z "$password" ]; then
+        password="$(head -c 12 /dev/urandom | base64 | tr -dc 'A-Za-z0-9' | head -c 8)"
+        echo "No VNCPASSWORD set. Generated password for this session: $password"
+    fi
+    # VNC auth only uses the first 8 characters.
+    printf '%s' "$password" | vncpasswd -f > "$HOME/.vnc/passwd"
+    chmod 600 "$HOME/.vnc/passwd"
+    auth_args=(-rfbauth "$HOME/.vnc/passwd" -SecurityTypes VncAuth)
 fi
-# VNC auth only uses the first 8 characters.
-printf '%s' "$password" | vncpasswd -f > "$HOME/.vnc/passwd"
-chmod 600 "$HOME/.vnc/passwd"
 
-Xvnc "$DISPLAY" -rfbport 5901 -rfbauth "$HOME/.vnc/passwd" \
-    -geometry "$VNCGEOMETRY" -depth "$VNCDEPTH" -SecurityTypes VncAuth \
+Xvnc "$DISPLAY" -rfbport 5901 "${auth_args[@]}" \
+    -geometry "$VNCGEOMETRY" -depth "$VNCDEPTH" \
     -AlwaysShared -ac &>"$config/log/xvnc.log" &
 for _ in $(seq 1 50); do
     [ -S "/tmp/.X11-unix/X${DISPLAY#:}" ] && break
