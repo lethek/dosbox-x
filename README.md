@@ -26,6 +26,7 @@ Both are tagged with the DOSBox-X version (for example `2026.10.01`) and `latest
 - `VNCPASSWORD` (or `VNCPASS`): VNC password, first 8 characters are used. A random one is logged at startup if unset.
 - `VNCAUTH=none` disables the password for both VNC and noVNC. Only use it on a trusted network.
 - `AUTOSLEEP=1` (default) pauses DOSBox-X while no VNC client is connected.
+- If `/tls/tls.crt` and `/tls/tls.key` exist (override with `TLSDIR`), native VNC clients can use VeNCrypt (`X509None`, or `X509Vnc` with a password) for TLS-encrypted VNC on port 5901. Plain VNC is still offered alongside it, because the built-in noVNC proxy needs it.
 - `VNCGEOMETRY` (default `1024x768`) and `VNCDEPTH` (default `24`).
 
 To bump DOSBox-X, change `DOSBOX_X_VERSION` and `DOSBOX_X_SHA256` in `base/Dockerfile`. To bump noVNC, change `NOVNC_VERSION` and `NOVNC_SHA256` in `novnc/Dockerfile`.

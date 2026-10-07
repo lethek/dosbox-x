@@ -10,9 +10,19 @@ if [ ! -w "$config" ]; then
 fi
 mkdir -p "$config/drive_d" "$config/log" "$HOME/.vnc"
 
+# Optional VeNCrypt (TLS inside the VNC protocol) for native VNC clients. It is
+# offered next to the plain type because the built-in noVNC proxy needs plain VNC.
+tls_dir="${TLSDIR:-/tls}"
+tls_args=()
+if [ -r "$tls_dir/tls.crt" ] && [ -r "$tls_dir/tls.key" ]; then
+    echo "VeNCrypt enabled using the certificate in $tls_dir"
+    tls_args=(-X509Cert "$tls_dir/tls.crt" -X509Key "$tls_dir/tls.key")
+    x509=1
+fi
+
 if [ "${VNCAUTH:-password}" = "none" ]; then
     echo "VNCAUTH=none: VNC and noVNC require no password"
-    auth_args=(-SecurityTypes None)
+    auth_args=(-SecurityTypes "${x509:+X509None,}None")
 else
     password="${VNCPASSWORD:-${VNCPASS:-}}"
     if [ -z "$password" ]; then
@@ -22,10 +32,10 @@ else
     # VNC auth only uses the first 8 characters.
     printf '%s' "$password" | vncpasswd -f > "$HOME/.vnc/passwd"
     chmod 600 "$HOME/.vnc/passwd"
-    auth_args=(-rfbauth "$HOME/.vnc/passwd" -SecurityTypes VncAuth)
+    auth_args=(-rfbauth "$HOME/.vnc/passwd" -SecurityTypes "${x509:+X509Vnc,}VncAuth")
 fi
 
-Xvnc "$DISPLAY" -rfbport 5901 "${auth_args[@]}" \
+Xvnc "$DISPLAY" -rfbport 5901 "${auth_args[@]}" "${tls_args[@]}" \
     -geometry "$VNCGEOMETRY" -depth "$VNCDEPTH" \
     -AlwaysShared -ac &>"$config/log/xvnc.log" &
 for _ in $(seq 1 50); do
