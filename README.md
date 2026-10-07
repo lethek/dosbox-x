@@ -1,4 +1,4 @@
-# dosbox-x-container
+# dosbox-x
 
 DOSBox-X built from source, served through a VNC server and noVNC in the browser. Upstream publishes no Linux binaries or container image, so this builds one.
 
