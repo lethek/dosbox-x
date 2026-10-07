@@ -10,11 +10,21 @@ DOSBox-X built from source, served through a VNC server and noVNC in the browser
 
 This repository only contains the build files, not DOSBox-X source. It is not affiliated with the DOSBox-X project.
 
-- Image: `ghcr.io/lethek/dosbox-x:<dosbox-x version>`
-- Browser UI on port 8080, raw VNC on port 5901
-- Runs as uid 1000. Mount a volume at `/config` (config, logs, `drive_d`).
-- `VNCPASSWORD`: VNC password (first 8 characters are used). A random one is logged at startup if unset.
+## Images
+
+| Image | Contents |
+|---|---|
+| `ghcr.io/lethek/dosbox-x` | DOSBox-X only. Runs as uid 1000, needs an X display (`DISPLAY`). Entrypoint is `dosbox-x`. |
+| `ghcr.io/lethek/dosbox-x-novnc` | The image above plus TigerVNC, websockify and noVNC, so it runs standalone and is used from a browser. |
+
+Both are tagged with the DOSBox-X version (for example `2026.10.01`) and `latest`.
+
+## dosbox-x-novnc
+
+- Browser UI on port 8080, raw VNC on port 5901.
+- Mount a volume at `/config` (config, logs, `drive_d`).
+- `VNCPASSWORD` (or `VNCPASS`): VNC password, first 8 characters are used. A random one is logged at startup if unset.
 - `AUTOSLEEP=1` (default) pauses DOSBox-X while no VNC client is connected.
 - `VNCGEOMETRY` (default `1024x768`) and `VNCDEPTH` (default `24`).
 
-To bump DOSBox-X, change `DOSBOX_X_VERSION` and `DOSBOX_X_SHA256` in the `Dockerfile`.
+To bump DOSBox-X, change `DOSBOX_X_VERSION` and `DOSBOX_X_SHA256` in `base/Dockerfile`. To bump noVNC, change `NOVNC_VERSION` and `NOVNC_SHA256` in `novnc/Dockerfile`.
