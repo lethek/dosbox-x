@@ -2,6 +2,14 @@
 
 DOSBox-X built from source, served through a VNC server and noVNC in the browser. Upstream publishes no Linux binaries or container image, so this builds one.
 
+## Sources
+
+- DOSBox-X: <https://github.com/joncampbell123/dosbox-x> (GPL-2.0), built from the release tag named by `DOSBOX_X_VERSION` in the `Dockerfile`, with its sha256 checked.
+- noVNC: <https://github.com/novnc/noVNC> (MPL-2.0), the release named by `NOVNC_VERSION`, with its sha256 checked.
+- Runtime packages (TigerVNC, websockify and libraries) come from Ubuntu 24.04.
+
+This repository only contains the build files, not DOSBox-X source. It is not affiliated with the DOSBox-X project.
+
 - Image: `ghcr.io/lethek/dosbox-x:<dosbox-x version>`
 - Browser UI on port 8080, raw VNC on port 5901
 - Runs as uid 1000. Mount a volume at `/config` (config, logs, `drive_d`).
